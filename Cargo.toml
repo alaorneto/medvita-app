@@ -1,0 +1,92 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/medvita",
+    "crates/medvita_api",
+    "crates/medvita_auth",
+    "crates/medvita_platform",
+    "crates/medvita_ui",
+    "crates/medvita_updater",
+    "xtask",
+]
+default-members = ["crates/medvita"]
+
+# The release automation (dev-workflow) rewrites this line; nobody edits it by hand.
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.98"
+authors = ["Katuá Tech"]
+license-file = "LICENSE"
+publish = false
+repository = "https://github.com/alaorneto/sk_med_app"
+
+[workspace.dependencies]
+# Workspace crates (no version: they are never published).
+medvita_api = { path = "crates/medvita_api" }
+medvita_auth = { path = "crates/medvita_auth" }
+medvita_platform = { path = "crates/medvita_platform" }
+medvita_ui = { path = "crates/medvita_ui" }
+medvita_updater = { path = "crates/medvita_updater" }
+
+# UI. gpui-kit ships weekly with breaking changes and pins its GPUI snapshot (gpui-pre) exactly:
+# keep the exact pin and upgrade on purpose (docs/adr/0001-gpui-kit.md).
+gpui-kit = "=0.10.0"
+rust-i18n = "4"
+rust-embed = "8"
+
+# Updates. The `vpk` CLI in CI must have the same version (docs/releasing.md).
+velopack = { version = "=1.2.161", features = ["public-utils"] }
+
+# HTTP, auth and async.
+reqwest = { version = "0.13", features = ["json", "query", "form", "stream"] }
+oauth2 = { version = "5", default-features = false }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync", "io-util"] }
+futures = "0.3"
+async-trait = "0.1"
+keyring-core = "1.1"
+windows-native-keyring-store = "1.1"
+
+# Crypto and encoding.
+ed25519-dalek = { version = "2", features = ["pkcs8", "pem"] }
+sha2 = "0.10"
+base64 = "0.22"
+hex = "0.4"
+getrandom = "0.3"
+secrecy = "0.10"
+
+# Data and errors.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+url = { version = "2", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", default-features = false, features = ["std", "clock", "serde"] }
+semver = "1"
+thiserror = "2"
+anyhow = "1"
+
+# Platform.
+directories = "6"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-appender = "0.2"
+
+# Build and tests.
+winresource = "0.1"
+wiremock = "0.6"
+tempfile = "3"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+# The MSVC linker prints "Creating library …" for binaries whose C dependencies export symbols;
+# that is noise, not a problem in our code, and must not fail `-D warnings`.
+linker_messages = "allow"
+
+[workspace.lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+strip = "symbols"

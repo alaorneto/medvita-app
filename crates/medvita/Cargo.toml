@@ -1,0 +1,34 @@
+[package]
+name = "medvita"
+description = "Medvita Desktop."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license-file.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "medvita"
+path = "src/main.rs"
+
+[dependencies]
+medvita_auth.workspace = true
+medvita_platform.workspace = true
+medvita_ui.workspace = true
+medvita_updater.workspace = true
+tracing.workspace = true
+velopack.workspace = true
+
+[build-dependencies]
+winresource.workspace = true
+
+[package.metadata.winresource]
+ProductName = "Medvita"
+FileDescription = "Medvita"
+CompanyName = "Katuá Tech"
+LegalCopyright = "Copyright (c) 2026 Katuá Tech"
+OriginalFilename = "medvita.exe"
+
+[lints]
+workspace = true
