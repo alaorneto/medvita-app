@@ -900,7 +900,7 @@ impl MedvitaRoot {
 
     fn render_signed_out(&mut self, cx: &mut Context<Self>) -> Div {
         let host = self.server_host().unwrap_or_default();
-        let mut body = card()
+        let body = card()
             .child(img(LOGO).size_12())
             .child(title(t!("login.title").to_string()))
             .child(
@@ -931,38 +931,37 @@ impl MedvitaRoot {
                         cx.notify();
                     })),
             );
+        // Developer mode (personal token): debug builds only.
         #[cfg(debug_assertions)]
-        {
-            body = body.child(
-                v_flex()
-                    .gap_2()
-                    .pt_4()
-                    .border_t_1()
-                    .border_color(cx.theme().border)
-                    .child(
-                        div()
-                            .font_weight(FontWeight::SEMIBOLD)
-                            .child(t!("login.dev_title").to_string()),
-                    )
-                    .child(
-                        div()
-                            .text_sm()
-                            .text_color(cx.theme().muted_foreground)
-                            .child(t!("login.dev_description").to_string()),
-                    )
-                    .child(Input::new(&self.token_input))
-                    .when_some(self.token_error.clone(), |this, error| {
-                        this.child(div().text_sm().text_color(cx.theme().danger).child(error))
-                    })
-                    .child(
-                        Button::new("sign-in-token")
-                            .label(t!("login.dev_button").to_string())
-                            .on_click(cx.listener(|this, _, window, cx| {
-                                this.sign_in_with_token(window, cx)
-                            })),
-                    ),
-            );
-        }
+        let body = body.child(
+            v_flex()
+                .gap_2()
+                .pt_4()
+                .border_t_1()
+                .border_color(cx.theme().border)
+                .child(
+                    div()
+                        .font_weight(FontWeight::SEMIBOLD)
+                        .child(t!("login.dev_title").to_string()),
+                )
+                .child(
+                    div()
+                        .text_sm()
+                        .text_color(cx.theme().muted_foreground)
+                        .child(t!("login.dev_description").to_string()),
+                )
+                .child(Input::new(&self.token_input))
+                .when_some(self.token_error.clone(), |this, error| {
+                    this.child(div().text_sm().text_color(cx.theme().danger).child(error))
+                })
+                .child(
+                    Button::new("sign-in-token")
+                        .label(t!("login.dev_button").to_string())
+                        .on_click(
+                            cx.listener(|this, _, window, cx| this.sign_in_with_token(window, cx)),
+                        ),
+                ),
+        );
         body
     }
 
