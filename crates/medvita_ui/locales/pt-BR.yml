@@ -1,0 +1,208 @@
+_version: 2
+
+app.name:
+  pt-BR: Medvita
+app.tagline:
+  pt-BR: Gestão médica
+
+common.cancel:
+  pt-BR: Cancelar
+common.continue:
+  pt-BR: Continuar
+common.retry:
+  pt-BR: Tentar de novo
+common.close:
+  pt-BR: Fechar
+common.loading:
+  pt-BR: Carregando…
+common.connecting:
+  pt-BR: Conectando ao servidor…
+
+server.title:
+  pt-BR: Qual é o endereço do seu Medvita?
+server.description:
+  pt-BR: Informe o endereço que você usa no navegador para entrar no Medvita.
+server.placeholder:
+  pt-BR: https://suaclinica.medvita.com.br
+server.invalid:
+  pt-BR: Endereço inválido. Use o endereço completo, começando com https://.
+server.insecure:
+  pt-BR: Por segurança, o endereço precisa começar com https://.
+server.change:
+  pt-BR: Trocar servidor
+
+login.title:
+  pt-BR: Entrar no Medvita
+login.description:
+  pt-BR: O login acontece no seu navegador, com o mesmo usuário e senha do sistema web.
+login.server:
+  pt-BR: "Servidor: %{host}"
+login.button:
+  pt-BR: Entrar com o navegador
+login.waiting_title:
+  pt-BR: Continue no navegador
+login.waiting:
+  pt-BR: Abrimos o login do Medvita no seu navegador. Depois de entrar, volte para cá.
+login.reopen:
+  pt-BR: Abrir o navegador de novo
+login.session_expired:
+  pt-BR: Sua sessão expirou. Entre de novo.
+login.dev_title:
+  pt-BR: Modo desenvolvedor
+login.dev_description:
+  pt-BR: Só em builds de desenvolvimento. Cole um token pessoal criado no sistema web.
+login.dev_placeholder:
+  pt-BR: skt_…
+login.dev_button:
+  pt-BR: Entrar com token pessoal
+login.dev_invalid:
+  pt-BR: Isso não parece um token pessoal (skt_…).
+
+organization.title:
+  pt-BR: Escolha a organização
+organization.description:
+  pt-BR: Você tem acesso a mais de uma organização. Você pode trocar depois pela barra de título.
+organization.none:
+  pt-BR: Sua conta não tem nenhuma organização ativa. Fale com o administrador da sua clínica.
+organization.change:
+  pt-BR: Trocar organização
+
+user.sign_out:
+  pt-BR: Sair
+user.signed_out:
+  pt-BR: Você saiu do Medvita.
+
+nav.group:
+  pt-BR: Módulos
+nav.home:
+  pt-BR: Início
+nav.patients:
+  pt-BR: Pacientes
+nav.schedule:
+  pt-BR: Agenda
+nav.records:
+  pt-BR: Prontuário
+nav.finance:
+  pt-BR: Financeiro
+nav.settings:
+  pt-BR: Configurações
+
+home.greeting:
+  pt-BR: "Olá, %{name}"
+home.organization:
+  pt-BR: "Organização: %{name}"
+home.description:
+  pt-BR: Este é o início do Medvita Desktop. Os módulos aparecem no menu à esquerda conforme forem liberados.
+
+module.placeholder_title:
+  pt-BR: Módulo em desenvolvimento
+module.placeholder:
+  pt-BR: "%{module} ainda não está disponível no aplicativo de desktop. Use o sistema web enquanto isso."
+
+settings.title:
+  pt-BR: Configurações
+settings.theme:
+  pt-BR: Tema
+settings.theme_system:
+  pt-BR: Seguir o sistema
+settings.theme_light:
+  pt-BR: Claro
+settings.theme_dark:
+  pt-BR: Escuro
+settings.channel:
+  pt-BR: Canal de atualização
+settings.channel_stable:
+  pt-BR: Estável
+settings.channel_beta:
+  pt-BR: Beta
+settings.channel_hint:
+  pt-BR: O canal Beta recebe versões novas antes, para testes.
+settings.server:
+  pt-BR: Servidor
+settings.server_hint:
+  pt-BR: Trocar o servidor encerra a sessão atual.
+settings.about:
+  pt-BR: Sobre
+settings.version:
+  pt-BR: "Versão %{version}"
+settings.commit:
+  pt-BR: "Compilação %{commit}"
+settings.publisher:
+  pt-BR: Katuá Tech
+
+status.server:
+  pt-BR: "Servidor: %{host}"
+status.no_server:
+  pt-BR: Sem servidor
+status.version:
+  pt-BR: "v%{version}"
+
+update.check_now:
+  pt-BR: Verificar atualização agora
+update.disabled:
+  pt-BR: "Atualização automática indisponível: %{reason}"
+update.idle:
+  pt-BR: Atualização automática ativa
+update.checking:
+  pt-BR: Procurando atualização…
+update.up_to_date:
+  pt-BR: O Medvita está atualizado
+update.downloading:
+  pt-BR: "Baixando a versão %{version}: %{percent}%"
+update.ready:
+  pt-BR: "A versão %{version} está pronta"
+update.ready_notification:
+  pt-BR: "A versão %{version} do Medvita foi baixada. Reinicie para usar, ou ela entra na próxima vez que você abrir o app."
+update.restart:
+  pt-BR: Reiniciar agora
+update.failed:
+  pt-BR: "Não foi possível atualizar: %{reason}"
+update.required_title:
+  pt-BR: Atualização obrigatória
+update.required:
+  pt-BR: Esta versão do Medvita não é mais aceita pelo servidor. A versão nova está sendo baixada.
+
+errors.request_id:
+  pt-BR: "(código para o suporte: %{id})"
+errors.network:
+  pt-BR: Não foi possível falar com o servidor. Verifique a sua conexão.
+errors.timeout:
+  pt-BR: O servidor demorou demais para responder.
+errors.session_expired:
+  pt-BR: Sua sessão expirou. Entre de novo.
+errors.mfa_required:
+  pt-BR: Sua conta precisa da verificação em duas etapas. Configure-a no sistema web e entre de novo.
+errors.organization_suspended:
+  pt-BR: O acesso desta organização está suspenso. Fale com o administrador.
+errors.token_not_allowed:
+  pt-BR: O servidor ainda não aceita o aplicativo de desktop para esta função.
+errors.forbidden:
+  pt-BR: Você não tem permissão para isso.
+errors.not_found:
+  pt-BR: Não encontrado.
+errors.invalid:
+  pt-BR: Verifique os dados informados.
+errors.changed:
+  pt-BR: O registro foi alterado por outra pessoa. Recarregue e tente de novo.
+errors.rate_limited:
+  pt-BR: Muitas requisições seguidas. Aguarde um pouco.
+errors.maintenance:
+  pt-BR: O Medvita está em manutenção.
+errors.maintenance_until:
+  pt-BR: "O Medvita está em manutenção até %{time}."
+errors.server:
+  pt-BR: O servidor encontrou um erro. Tente de novo em instantes.
+errors.unexpected:
+  pt-BR: Resposta inesperada do servidor.
+errors.no_sign_in:
+  pt-BR: Este servidor ainda não oferece o login do aplicativo de desktop.
+errors.loopback:
+  pt-BR: Não foi possível preparar o retorno do login. Um antivírus ou firewall pode estar bloqueando conexões locais.
+errors.denied:
+  pt-BR: O login não foi autorizado.
+errors.login_timeout:
+  pt-BR: O login não foi concluído a tempo. Tente de novo.
+errors.vault:
+  pt-BR: Não foi possível usar o Gerenciador de Credenciais do Windows.
+errors.sign_in_failed:
+  pt-BR: Não foi possível concluir o login.
