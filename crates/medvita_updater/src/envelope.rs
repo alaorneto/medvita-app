@@ -230,6 +230,20 @@ mod tests {
                 Some(now() + chrono::Duration::days(1)),
             ),
             ("not json", b"nope".to_vec(), FEED, vk, None),
+            (
+                "other client",
+                serde_json::to_vec(&sign_envelope(
+                    FEED,
+                    "other-desktop",
+                    "stable",
+                    now(),
+                    &signer,
+                ))
+                .unwrap(),
+                FEED,
+                vk,
+                None,
+            ),
         ];
         for (name, bytes, feed, vk, last) in cases {
             assert!(
