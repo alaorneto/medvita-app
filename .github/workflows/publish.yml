@@ -1,0 +1,115 @@
+# Publicação de uma versão: compila, empacota com o Velopack, assina o envelope do feed e anexa
+# tudo à GitHub Release da tag. O servidor do Medvita sincroniza a partir daí (docs/updates.md).
+# Disparado pelo workflow "Versão e release" do dev-workflow (release.dispatch_workflow), com os
+# inputs version e tag; também pode ser rodado à mão numa tag existente.
+name: Publicação
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versão a publicar (X.Y.Z)"
+        required: true
+      tag:
+        description: "Tag da versão (vX.Y.Z)"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-${{ inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  # O CLI do Velopack acompanha o crate `velopack` do Cargo.toml.
+  VPK_VERSION: "1.2.161"
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    environment: release
+    env:
+      VERSION: ${{ inputs.version }}
+      TAG: ${{ inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - run: git config --system core.longpaths true
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Conferir a chave pública de atualização
+        run: |
+          $key = (Get-Content crates/medvita_updater/keys/update-public.key -Raw).Trim()
+          if ($key -eq 'UNSET' -or -not $key.StartsWith('-----BEGIN PUBLIC KEY-----')) {
+            Write-Error "keys/update-public.key não tem a chave pública de atualização (cargo xtask keygen, docs/releasing.md)."
+            exit 1
+          }
+
+      - name: Conferir a versão
+        run: |
+          $declared = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"$').Matches[0].Groups[1].Value
+          if ($declared -ne $env:VERSION) { Write-Error "Cargo.toml diz $declared, o input diz $env:VERSION"; exit 1 }
+          if ("v$env:VERSION" -ne $env:TAG) { Write-Error "tag $env:TAG não corresponde à versão $env:VERSION"; exit 1 }
+
+      - run: rustup show
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: release
+
+      - name: Compilar
+        env:
+          MEDVITA_DEFAULT_SERVER_URL: ${{ vars.MEDVITA_DEFAULT_SERVER_URL }}
+        run: |
+          $env:GIT_HASH = (git rev-parse --short=12 HEAD)
+          cargo build --release --locked -p medvita
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item target/release/medvita.exe dist/
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: dotnet tool install -g vpk --version $env:VPK_VERSION
+
+      - name: Baixar a versão anterior (para o pacote delta)
+        # Na primeira versão não há anterior: o pacote sai só completo.
+        continue-on-error: true
+        run: vpk download github --repoUrl "https://github.com/${{ github.repository }}" --token "${{ github.token }}" --channel win --outputDir Releases
+
+      - name: Empacotar
+        env:
+          SIGN_PARAMS: ${{ secrets.WINDOWS_SIGN_PARAMS }}
+        run: |
+          $arguments = @(
+            'pack', '--packId', 'Medvita', '--packVersion', $env:VERSION, '--packDir', 'dist',
+            '--mainExe', 'medvita.exe', '--packTitle', 'Medvita', '--packAuthors', 'Katuá Tech',
+            '--icon', 'crates/medvita/resources/windows/medvita.ico', '--channel', 'win', '--outputDir', 'Releases'
+          )
+          # Authenticode, quando o certificado existir (docs/releasing.md).
+          if ($env:SIGN_PARAMS) { $arguments += @('--signParams', $env:SIGN_PARAMS) }
+          vpk @arguments
+
+      - name: Assinar o envelope do feed
+        env:
+          DESKTOP_SIGNING_KEY: ${{ secrets.DESKTOP_SIGNING_KEY }}
+        run: |
+          $channel = if ($env:VERSION.Contains('-')) { 'beta' } else { 'stable' }
+          cargo xtask sign-feed --feed Releases/releases.win.json --channel $channel
+          cargo xtask verify-feed --feed Releases/releases.win.json --envelope Releases/releases.win.sig.json --channel $channel
+
+      - name: Anexar à release (só os arquivos desta versão)
+        run: |
+          $files = Get-ChildItem Releases | Where-Object {
+            $_.Name -like "Medvita-$env:VERSION-*.nupkg" -or
+            $_.Name -in @('Medvita-win-Setup.exe', 'Medvita-win-Portable.zip', 'releases.win.json', 'assets.win.json', 'releases.win.sig.json', 'RELEASES')
+          }
+          $files | ForEach-Object { $_.Name }
+          gh release upload $env:TAG @($files.FullName) --clobber
