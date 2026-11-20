@@ -1,0 +1,21 @@
+[package]
+name = "xtask"
+description = "Build tasks of Medvita Desktop: update key pair and feed envelope."
+# Fixed on purpose: the release automation only versions the app crates.
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+base64.workspace = true
+chrono.workspace = true
+ed25519-dalek.workspace = true
+getrandom.workspace = true
+medvita_platform.workspace = true
+medvita_updater.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
