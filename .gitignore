@@ -1,0 +1,25 @@
+# Rust
+/target/
+
+# Saída local do Velopack (vpk pack) e feeds de teste
+/Releases/
+/releases-local/
+
+# Segredos: nunca no repositório. A chave pública de atualização (crates/medvita_updater/keys/update-public.key) é commitada.
+.env
+*.pem
+*.pfx
+*.p12
+*.private.key
+*-private.key
+
+# Editores e sistema
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Claude Code local
+.claude/settings.local.json
+.claude/worktrees/
