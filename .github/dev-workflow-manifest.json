@@ -1,7 +1,7 @@
 {
   "about": "Gerado pelo bootstrap.py do skill dev-workflow; não edite à mão.",
   "schema": 1,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "skill_dir": ".claude/skills/dev-workflow",
   "files": {
     ".github/ISSUE_TEMPLATE/4-documentation.yml": "6435c73ef4157b84f6257882940eb6bc76370cc1f8e0b8671cb7838451232725",
