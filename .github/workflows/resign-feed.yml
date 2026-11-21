@@ -1,0 +1,59 @@
+# Re-assina o envelope do feed da release mais recente. O envelope vale 120 dias
+# (medvita_updater::envelope::VALIDITY_DAYS); sem a renovação mensal, os clientes param de aceitar
+# o feed. O servidor do Medvita pega o envelope novo na próxima sincronização.
+name: Renovação do envelope do feed
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag a re-assinar (vazio: a release mais recente)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: resign-feed
+  cancel-in-progress: false
+
+jobs:
+  resign:
+    runs-on: ubuntu-latest
+    environment: release
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Escolher a release
+        id: release
+        run: |
+          tag="${{ inputs.tag }}"
+          if [ -z "$tag" ]; then tag=$(gh release view --json tagName --jq .tagName); fi
+          prerelease=$(gh release view "$tag" --json isPrerelease --jq .isPrerelease)
+          channel=stable; if [ "$prerelease" = "true" ]; then channel=beta; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "channel=$channel" >> "$GITHUB_OUTPUT"
+          echo "re-assinando $tag ($channel)"
+
+      - run: rustup show
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: xtask
+
+      - name: Re-assinar
+        env:
+          DESKTOP_SIGNING_KEY: ${{ secrets.DESKTOP_SIGNING_KEY }}
+          TAG: ${{ steps.release.outputs.tag }}
+          CHANNEL: ${{ steps.release.outputs.channel }}
+        run: |
+          mkdir -p feed
+          gh release download "$TAG" --pattern releases.win.json --dir feed
+          cargo xtask sign-feed --feed feed/releases.win.json --channel "$CHANNEL"
+          cargo xtask verify-feed --feed feed/releases.win.json --envelope feed/releases.win.sig.json --channel "$CHANNEL"
+          gh release upload "$TAG" feed/releases.win.sig.json --clobber

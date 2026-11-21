@@ -1,0 +1,12 @@
+Medvita Desktop
+Copyright (c) 2026 Katuá Tech. Todos os direitos reservados.
+
+Este produto inclui código adaptado de terceiros:
+
+- crates/medvita_ui/src/bridge.rs é adaptado de `crates/gpui_tokio` do Zed
+  (https://github.com/zed-industries/zed), Copyright (c) Zed Industries, Inc.,
+  licenciado sob a Apache License, Version 2.0
+  (https://www.apache.org/licenses/LICENSE-2.0).
+
+As dependências distribuídas no binário e as suas licenças são verificadas pelo
+`cargo deny check licenses` (deny.toml). Os ícones Lucide vêm do GPUI Kit (licença ISC).

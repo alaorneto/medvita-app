@@ -1,0 +1,32 @@
+[package]
+name = "medvita_ui"
+description = "GPUI Kit views of Medvita Desktop: shell, screens, theme, assets and the tokio bridge."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license-file.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chrono.workspace = true
+gpui-kit.workspace = true
+medvita_api.workspace = true
+medvita_auth.workspace = true
+medvita_platform.workspace = true
+medvita_updater.workspace = true
+reqwest.workspace = true
+rust-embed.workspace = true
+rust-i18n.workspace = true
+secrecy.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+url.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+tokio.workspace = true
+
+[lints]
+workspace = true

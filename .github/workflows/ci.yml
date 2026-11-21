@@ -1,0 +1,88 @@
+# CI do Medvita Desktop: formatação, lints, testes e build de release no Windows; licenças e avisos
+# de segurança das dependências. O job agregador `CI` é o que a proteção de branch exige.
+# Actions fixadas por SHA, como no skeleton e no sk_med_core.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+
+jobs:
+  fmt:
+    runs-on: windows-latest
+    steps:
+      - run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup show
+      - run: cargo fmt --all --check
+
+  clippy:
+    runs-on: windows-latest
+    steps:
+      - run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup show
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: clippy
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+  test:
+    runs-on: windows-latest
+    steps:
+      - run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup show
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: test
+      - run: cargo test --workspace --locked
+
+  build:
+    # Só o build de release compila os shaders HLSL do GPUI (fxc.exe do Windows SDK).
+    runs-on: windows-latest
+    steps:
+      - run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup show
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: release
+      - run: cargo build --release --locked -p medvita
+
+  deny:
+    # A action do cargo-deny é Docker: roda no Linux, mas o grafo é o do alvo Windows (deny.toml).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: EmbarkStudios/cargo-deny-action@17aeb3c839e42274e2b8adf721c8c65edfdc74dd # v2.1.3
+        with:
+          command: check
+          rust-version: "1.98.1"
+
+  CI:
+    if: always()
+    needs: [fmt, clippy, test, build, deny]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Todos os jobs passaram
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "resultados: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then exit 1; fi
+          done
