@@ -50,7 +50,7 @@ windows-native-keyring-store = "1.1"
 # Crypto and encoding.
 ed25519-dalek = { version = "2", features = ["pkcs8", "pem"] }
 sha2 = "0.10"
-base64 = "0.22"
+base64 = "0.23"
 hex = "0.4"
 getrandom = "0.3"
 secrecy = "0.10"
