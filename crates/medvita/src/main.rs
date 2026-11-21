@@ -6,10 +6,10 @@ use medvita_platform::{AppPaths, build_info};
 
 fn main() {
     // Must run first: during install, update and uninstall Velopack runs its hooks here and may
-    // exit the process. It also applies a downloaded update on startup.
-    velopack::VelopackApp::build()
-        .set_app_user_model_id(build_info::APP_ID)
-        .run();
+    // exit the process. It also applies a downloaded update on startup. The AppUserModelID stays
+    // Velopack's (`velopack.Medvita`, from the package manifest): the Start menu and desktop
+    // shortcuts carry the same one, so the taskbar groups and pins the running app with them.
+    velopack::VelopackApp::build().run();
 
     let paths = AppPaths::discover()
         .unwrap_or_else(|| AppPaths::under(&std::env::temp_dir().join(build_info::DIR_NAME)));
