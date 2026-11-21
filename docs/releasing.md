@@ -63,11 +63,15 @@ vpk pack --packId Medvita --packVersion 0.0.1 --packDir dist --mainExe medvita.e
 cargo xtask sign-feed --feed $tmp\Releases\releases.win.json --channel stable --key-file $tmp\test-private.pem
 ```
 
-Sirva `$tmp\Releases` no layout `/clients/medvita-desktop/stable/` em `http://127.0.0.1:8766` (por exemplo copiando os arquivos para `$tmp\www\clients\medvita-desktop\stable\` e rodando `py -3 -m http.server 8766 -d $tmp\www`). Depois:
+Sirva `$tmp\Releases` no layout `/clients/medvita-desktop/stable/` em `http://127.0.0.1:8766`, por exemplo copiando os arquivos para `$tmp\www\clients\medvita-desktop\stable\` e rodando `py -3 -m http.server 8766 --bind 127.0.0.1 -d $tmp\www`. Guarde o `Medvita-win-Setup.exe` da 0.0.1 antes de empacotar a 0.0.2: o `vpk pack` sobrescreve o arquivo. Depois:
 
-1. Instale com o `Medvita-win-Setup.exe` da 0.0.1, gerado antes da 0.0.2.
-2. Abra o app e espere 10 s, ou use "Verificar atualização agora".
-3. Confira a notificação da 0.0.2, clique em "Reiniciar agora" e veja a versão em Configurações → Sobre.
-4. Negativos: edite um byte do `releases.win.sig.json`, ou assine com outra chave. O app registra "update feed refused" no log e não baixa nada.
+1. **Instalar:** `Medvita-win-Setup.exe --silent` (da 0.0.1). O Velopack instala em `%LocalAppData%\Medvita` e cria atalhos no Menu Iniciar e na Área de Trabalho; no modo silencioso, não abre o app.
+2. **Negativo primeiro:** sirva um `releases.win.sig.json` adulterado (por exemplo, com `expires_at` alterado), abra `%LocalAppData%\Medvita\Medvita.exe` e espere 10 s. O log (`%LocalAppData%\Medvita\logs`) registra `update feed refused … bad signature`, e `packages\` continua só com a 0.0.1.
+3. **Atualização:** restaure o envelope válido e reabra o app. Em cerca de 10 s, o log mostra o delta 0.0.1 → 0.0.2 baixado e aplicado ao pacote, e a barra de status mostra "A versão 0.0.2 está pronta" com o botão "Reiniciar agora".
+4. **Aplicar:** clique em "Reiniciar agora", ou feche e reabra o app (o Velopack aplica na abertura). O log mostra `Medvita starting version="0.0.2"`, e `current\sq.version` diz 0.0.2.
 
-Ao terminar, desinstale (Configurações do Windows → Aplicativos → Medvita), restaure `update-public.key` (`git checkout`) e a versão do workspace, e apague `$tmp`.
+Ao terminar, desinstale com `%LocalAppData%\Medvita\Update.exe uninstall --silent` (remove a pasta, os atalhos e a entrada em Aplicativos). Descarte a cópia de trabalho com a versão e a chave de teste (o mais simples é fazer o teste num `git worktree` e removê-lo) e apague `$tmp`.
+
+Para trocar a versão na cópia de teste, edite o `Cargo.toml` e as entradas do `Cargo.lock` diretamente: o `release.py bump` calcula a versão atual pela última tag e recusa arquivos que já foram alterados.
+
+Roteiro executado em 2026-11-20: delta 0.0.1 → 0.0.2 aplicado na reabertura, envelope adulterado recusado e desinstalação limpa.
