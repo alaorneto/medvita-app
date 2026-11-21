@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      # O GPUI Kit fixa o snapshot do GPUI (gpui-pre) com versão exata; a família inteira sobe junta,
+      # de propósito (docs/adr/0001-gpui-kit.md).
+      gpui:
+        patterns: ["gpui-kit", "gpui-component*", "gpui-base", "gpui-kit-assets", "gpui-pre*"]
+      # O crate velopack e o `vpk` do publish.yml andam na mesma versão.
+      velopack:
+        patterns: ["velopack"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

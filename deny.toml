@@ -1,0 +1,68 @@
+# cargo-deny: licenças, avisos de segurança, duplicatas e origens das dependências.
+# Rode localmente com `cargo deny check` (cargo install cargo-deny --locked).
+
+[graph]
+# Só o alvo distribuído hoje: dependências de macOS/Linux ficam fora das checagens.
+targets = ["x86_64-pc-windows-msvc"]
+
+[advisories]
+# `instant`, `paste` (via gpui-component) e `derivative` (via velopack) estão sem manutenção, mas
+# chegam como transitivas; só uma dependência direta sem manutenção reprova.
+unmaintained = "workspace"
+# Cada exceção diz por que o risco não se aplica e quando revisar. Revise a lista a cada
+# atualização do velopack ou do gpui-kit (Dependabot agrupa as duas famílias).
+ignore = [
+    # chrono: sem manutenção e sem substituto compatível. O próprio GPUI (gpui-pre, gpui-base,
+    # gpui-component) depende dele, então trocá-lo no app não o tiraria do binário. Usamos só
+    # parse e formatação de datas RFC 3339. Revisar quando o GPUI migrar.
+    { id = "RUSTSEC-2026-0543", reason = "chrono vem do GPUI; uso restrito a RFC 3339" },
+    # zip 8.6 (via velopack 1.2.161, que exige ^8.6; a correção está no zip 9). Todas tratam da
+    # extração de arquivos hostis. O Velopack só extrai pacotes cujo SHA-256 confere com o feed,
+    # e o feed só é aceito com o envelope Ed25519 da Katuá Tech (docs/updates.md): um pacote hostil
+    # não chega à extração. Revisar quando o velopack estável passar a usar zip >= 9.
+    { id = "RUSTSEC-2026-0367", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0368", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0369", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0429", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0545", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0546", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0547", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+    { id = "RUSTSEC-2026-0548", reason = "zip via velopack; só pacotes verificados pelo feed assinado" },
+]
+
+[licenses]
+confidence-threshold = 0.9
+allow = [
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "BSL-1.0",
+    "Unicode-3.0",
+    "MPL-2.0",
+    "CDLA-Permissive-2.0",
+    "OpenSSL",
+    "CC0-1.0",
+    "0BSD",
+    "Unlicense",
+    "NCSA",
+]
+
+[licenses.private]
+# Os crates do workspace são proprietários e `publish = false`.
+ignore = true
+
+[bans]
+# O kit e o Velopack trazem versões diferentes do crate `windows`; avisar, não reprovar.
+multiple-versions = "warn"
+wildcards = "allow"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
