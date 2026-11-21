@@ -37,6 +37,7 @@ permissions:
   contents: write # commit de release, tag e GitHub Release
   issues: write # comentário e milestone nas issues incluídas
   pull-requests: write # comentário nos PRs incluídos; PR de release no modo pull-request
+  actions: write # dispara release.dispatch_workflow (só gerado quando ele está configurado)
 
 concurrency:
   group: release-${{ github.ref }}
