@@ -19,7 +19,7 @@ rust-version = "1.98"
 authors = ["Katuá Tech"]
 license-file = "LICENSE"
 publish = false
-repository = "https://github.com/alaorneto/sk_med_app"
+repository = "https://github.com/alaorneto/medvita-app"
 
 [workspace.dependencies]
 # Workspace crates (no version: they are never published).
