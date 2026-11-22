@@ -5,7 +5,7 @@ O app usa o [Velopack](https://docs.velopack.io/) para instalar e se atualizar, 
 ## Visão geral
 
 ```
-publish.yml ──► GitHub Release (privada) do sk_med_app ──► sincronização do servidor ──► /clients/... ──► app
+publish.yml ──► GitHub Release (privada) do medvita-app ──► sincronização do servidor ──► /clients/... ──► app
              nupkg, Setup.exe, releases.win.json,            (token do operador; verifica
              releases.win.sig.json                             o envelope e os SHA-256)
 ```

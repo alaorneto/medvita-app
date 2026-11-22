@@ -1,4 +1,4 @@
-# Instruções para agentes: Medvita Desktop (sk_med_app)
+# Instruções para agentes: Medvita Desktop (medvita-app)
 
 ## O que é este repositório
 

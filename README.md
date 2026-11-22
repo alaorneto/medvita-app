@@ -9,7 +9,7 @@ Aplicativo de desktop do **Medvita**, o sistema de gestão médica da Katuá Tec
 
 ## Estado
 
-Em construção: o esqueleto e a infraestrutura estão no epic [#1](https://github.com/alaorneto/sk_med_app/issues/1). As telas de negócio (pacientes, agenda, prontuário, financeiro) vêm depois.
+Em construção: o esqueleto e a infraestrutura estão no epic [#1](https://github.com/alaorneto/medvita-app/issues/1). As telas de negócio (pacientes, agenda, prontuário, financeiro) vêm depois.
 
 ## Documentação
 
