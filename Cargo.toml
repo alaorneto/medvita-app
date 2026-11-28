@@ -31,7 +31,7 @@ medvita_updater = { path = "crates/medvita_updater" }
 
 # UI. gpui-kit ships weekly with breaking changes and pins its GPUI snapshot (gpui-pre) exactly:
 # keep the exact pin and upgrade on purpose (docs/adr/0001-gpui-kit.md).
-gpui-kit = "=0.10.0"
+gpui-kit = "=0.11.0"
 rust-i18n = "4"
 rust-embed = "8"
 
